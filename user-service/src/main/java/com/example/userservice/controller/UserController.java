@@ -7,32 +7,29 @@ import com.example.userservice.vo.Greeting;
 import com.example.userservice.vo.RequestUser;
 import com.example.userservice.vo.ResponseUser;
 import io.micrometer.core.annotation.Timed;
-import org.apache.catalina.User;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.modelmapper.spi.MatchingStrategy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @RestController
-@RequestMapping("/")
+@RequestMapping("/user-service")
 public class UserController {
     private Environment env;
-    private UserService userService;
 
     @Autowired
     private Greeting greeting;
+
+    @Autowired
+    private UserService userService;
 
     @Autowired
     public UserController(Environment env, UserService userService) {
@@ -41,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/health_check")
-    @Timed(value="users.status", longTask = true)
+//    @Timed(value="users.status", longTask = true)
     public String status() {
         return String.format("It's Working in User Service"
                 + ", port(local.server.port)=" + env.getProperty("local.server.port")
@@ -68,6 +65,7 @@ public class UserController {
         return greeting.getMessage();
     }
 
+    // 사용자 등록
     @PostMapping("/users")
     public ResponseEntity<ResponseUser> createUser(@RequestBody RequestUser user) {
         ModelMapper mapper = new ModelMapper();
@@ -81,6 +79,7 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUser);
     }
 
+    // 사용자 목록 조회
     @GetMapping("/users")
     public ResponseEntity<List<ResponseUser>> getUsers() {
         Iterable<UserEntity> userList = userService.getUserByAll();
@@ -92,7 +91,8 @@ public class UserController {
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
-
+  
+    // userID로 특정 사용자 검색
     @GetMapping("/users/{userId}")
     public ResponseEntity<ResponseUser> getUser(@PathVariable("userId") String userId) {
         UserDto userDto = userService.getUserByUserId(userId);

@@ -2,8 +2,6 @@ package com.example.orderservice.controller;
 
 import com.example.orderservice.dto.OrderDto;
 import com.example.orderservice.jpa.OrderEntity;
-import com.example.orderservice.messagequeue.KafkaProducer;
-import com.example.orderservice.messagequeue.OrderProducer;
 import com.example.orderservice.service.OrderService;
 import com.example.orderservice.vo.RequestOrder;
 import com.example.orderservice.vo.ResponseOrder;
@@ -16,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -26,17 +25,24 @@ import java.util.UUID;
 public class OrderController {
     Environment env;
     OrderService orderService;
-    KafkaProducer kafkaProducer;
+//    KafkaProducer kafkaProducer;
 
-    OrderProducer orderProducer;
+//    OrderProducer orderProducer;
+
+//    @Autowired
+//    public OrderController(Environment env, OrderService orderService,
+//                           KafkaProducer kafkaProducer, OrderProducer orderProducer) {
+//        this.env = env;
+//        this.orderService = orderService;
+//        this.kafkaProducer = kafkaProducer;
+//        this.orderProducer = orderProducer;
+//    }
+
 
     @Autowired
-    public OrderController(Environment env, OrderService orderService,
-                           KafkaProducer kafkaProducer, OrderProducer orderProducer) {
+    public OrderController(Environment env, OrderService orderService) {
         this.env = env;
         this.orderService = orderService;
-        this.kafkaProducer = kafkaProducer;
-        this.orderProducer = orderProducer;
     }
 
     @GetMapping("/health_check")
@@ -45,6 +51,7 @@ public class OrderController {
                 env.getProperty("local.server.port"));
     }
 
+    // 특정 userID의 주문 생성
     @PostMapping("/{userId}/orders")
     public ResponseEntity<ResponseOrder> createOrder(@PathVariable("userId") String userId,
                                                      @RequestBody RequestOrder orderDetails) {

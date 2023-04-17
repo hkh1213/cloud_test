@@ -13,33 +13,32 @@ spring:
 #    sampler:
 #      probability: 1.0
 
-  rabbitmq:
-    host: 127.0.0.1
-    port: 5672
-    username: guest
-    password: guest
+#  rabbitmq:
+#    host: 127.0.0.1
+#    port: 5672
+#    username: guest
+#    password: guest
   h2:
     console:
       enabled: true
       settings:
         web-allow-others: true
       path: /h2-console
-#  datasource:
-#    driver-class-name: org.h2.Driver
-#    url: jdbc:h2:mem:testdb
-#    username: sa
-#    password: 12345
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:testdb
+    username: sa
+    password:
 
 eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka
   instance:
     instance-id: ${spring.application.name}:${spring.application.instance_id:${random.value}}
-#    prefer-ip-address: true
-#    ip-address: ${server.address}
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
-    fetch-registry: true
-    register-with-eureka: true
+    prefer-ip-address: true
 
 greeting:
   message: Welcome to the Simple E-commerce.
@@ -54,6 +53,6 @@ management:
       exposure:
         include: refresh, health, beans, busrefresh, info, metrics, prometheus
 
-#token:
-#  expiration_time: 86400000
-#  secret: user_token
+token:
+  expiration_time: 86400000
+  secret: user_token

@@ -3,8 +3,6 @@ package com.example.firstservice;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.ServerProperties;
-import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -12,8 +10,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.Enumeration;
 
 @RestController
 @RequestMapping("/first-service")
@@ -24,6 +20,14 @@ public class FirstServiceController {
     @Autowired
     public FirstServiceController(Environment env) {
         this.env = env;
+    }
+
+    @Value("${eureka.instance.instance-id}")
+    String instanceId;
+
+    @GetMapping("/hello")
+    public String hello() {
+        return String.format("Hello from instance %s", instanceId);
     }
 
     @GetMapping("/welcome")
@@ -38,12 +42,12 @@ public class FirstServiceController {
     }
 
     @GetMapping("/check")
-    public String check(HttpServletRequest request) {
-        Enumeration<String> headers = request.getHeaderNames();
-        Collections.list(headers).stream().forEach(name -> {
-            Enumeration<String> values = request.getHeaders(name);
-            Collections.list(values).stream().forEach(value -> System.out.println(name + "=" + value));
-        });
+    public String check(HttpServletRequest request) throws InterruptedException {
+//        Enumeration<String> headers = request.getHeaderNames();
+//        Collections.list(headers).stream().forEach(name -> {
+//            Enumeration<String> values = request.getHeaders(name);
+//            Collections.list(values).stream().forEach(value -> System.out.println(name + "=" + value));
+//        });
 
         log.info("Server port={}", request.getServerPort());
 
